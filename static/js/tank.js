@@ -18,6 +18,7 @@ function tankMe(beginX,beginY,direction,life,theimgU,theimgD,theimgL,theimgR){
 	this.exX       = 0;
 	this.exY       = 0;
 	this.direction = direction; 
+	this.dirJudge  = 0;
 	this.score     = 0;
 	this.life      = life;
 
@@ -50,10 +51,14 @@ function tankMe(beginX,beginY,direction,life,theimgU,theimgD,theimgL,theimgR){
 
 	this.moveLeft = function(){
 		if(this.X > 0 && this.direction ==Left) {
-			this.exX  = 25;
-			this.X   -= 25;
+			this.exX      = 25;
+			this.X       -= 25;
+			this.dirJudge =  0;
 		}
 		else{
+			if(this.direction != Left){
+				this.dirJudge =  1;
+			}
 			this.direction = Left;
 			this.exX       = 0;
 		}
@@ -62,10 +67,14 @@ function tankMe(beginX,beginY,direction,life,theimgU,theimgD,theimgL,theimgR){
 
 	this.moveUp = function(){
 		if(this.Y > 0  && this.direction == Up) {
-			this.exY = 25;
-			this.Y   -= 25;
+			this.exY      =  25;
+			this.Y       -= 25;
+			this.dirJudge =  0;
 		}
 		else{
+			if(this.direction != Up){
+				this.dirJudge =  1;
+			}
 			this.direction = Up;
 			this.exY = 0;
 		}
@@ -74,10 +83,14 @@ function tankMe(beginX,beginY,direction,life,theimgU,theimgD,theimgL,theimgR){
 
 	this.moveRight = function(){
 		if(this.X < 600  && this.direction == Right) {
-			this.exX = -25;
-			this.X   += 25;
+			this.exX      = -25;
+			this.X        += 25;
+			this.dirJudge =  0;
 		}
 		else{
+			if(this.direction != Right){
+				this.dirJudge =  1;
+			}
 			this.direction = Right;
 			this.exX       = 0;
 		}
@@ -85,10 +98,14 @@ function tankMe(beginX,beginY,direction,life,theimgU,theimgD,theimgL,theimgR){
 
 	this.moveDown = function(){
 		if(this.Y < 600  && this.direction == Down) {
-			this.exY = -25;
-			this.Y   += 25;
+			this.exY      = -25;
+			this.Y        += 25;
+			this.dirJudge =  0;
 		}
 		else{
+			if(this.direction != Down){
+				this.dirJudge =  1;
+			}
 			this.direction = Down;
 			this.exY = 0;
 		}
@@ -138,6 +155,7 @@ function draw(me){
 				},100);
 			}
 		}else{
+			if(me.dirJudge) canvas.clearRect(me.X,me.Y,50,50);
 			canvas.drawImage(me.getImg(),me.X,me.Y,50,50);
 		}
 		//canvas.clearRect(me.exX+me.X,me.Y,50,50);
@@ -158,35 +176,44 @@ function initTankMe(){
 }
 
 function move(me){
-	var key = Up;
-	key = listenKey ();
 	
-	if(key == Up||key == Down||key == Right||key ==Left){
-		me.keyChoice(key);
-		draw(me);
-	}
-	setTimeout("move(me)",100);
+	//setTimeout(function(){
+		listenKey ();
+	//	move(me)
+	//},100);
+	//setTimeout("move(me)",1000);
 }
 
 
-function getKey(e){ 
-	//e = e || event; 
-	keycode = e.which;
+function keyDown(e){ 
+	var e=e||event;
+	　　 keycode=e.keyCode||e.which||e.charCode;
+	setTimeout(function(e){
+		var e=e||event;
+	　　 keycode=e.keyCode||e.which||e.charCode;
 
+		if(keycode == Up||keycode == Down||keycode == Right||keycode ==Left){
+			me.keyChoice(keycode);
+			draw(me);
+		}
+	},100);
+	
 } 
 
 // 把keyup事件绑定到document中 
 function listenKey () { 
-	keycode = 0
-	if (document.addEventListener) { 
-		document.addEventListener("keyup",getKey,false); 
+	keycode = 0;
+	document.onkeydown = keyDown;
+	/*if (document.addEventListener) { 
+		document.addEventListener("keydown",keyDown,false); 
 		} 
 	else if (document.attachEvent) { 
-			document.attachEvent("onkeyup",getKey); 
+			document.attachEvent("onkeydown",keyDown); 
 		} 
 
-	if(!(keycode == Up||keycode == Down||keycode == Right||keycode ==Left)){
+	if(!(keycode == 38||keycode == Down||keycode == Right||keycode ==Left)){
 		keycode = 0;
 	}
+	*/
 	return keycode;
 } 
