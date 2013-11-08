@@ -431,11 +431,7 @@ function init(){
 	var i;
 	me    = initTankMe();
 	enemy = initTankEnemy();
-/*
-	for (var i = 0; i <65; ++i) {
-		map2[i] = 0;
-	};
-*/
+
 	for (var i = 0; i <65; ++i) {
 		map[i] = new Array(65);
 	};
