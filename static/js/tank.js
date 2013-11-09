@@ -5,12 +5,15 @@ const Down  = 40;
 const Space = 32;
 const noDir = 0;
 var me;
-var enemy    = new Array(3);
-var keycode  = noDir;
-var imgSteel = new Image();
-var imgWall  = new Image();
+var enemy      = new Array(3);
+var keycode    = noDir;
+var imgSteel   = new Image();
+var imgWall    = new Image();
+var imgBase	   = new Image();
+var imgDestory = new Image();
 
-//0:nothing 1:me  2:enemy[0] 3:enemy[1]  4:enemy[2] 9:bullet
+//0:nothing 1:me  2:enemy[0] 3:enemy[1]  4:enemy[2] 9:bullet 
+// 15:imgWall  16:imgSteel  17:imgBase   18:imgDestory
 var map = new Array(66);
 $(document).ready(function(){
 	$(document).keydown(function(){
@@ -174,10 +177,10 @@ function tankMe(beginX,beginY,direction,life,theimgU,theimgD,theimgL,theimgR,the
 			case Up   :this.bullet.X = this.X + 2;
 					   this.bullet.Y = this.Y;break;
 			case Down :this.bullet.X = this.X + 2;
-					   this.bullet.Y = this.Y+5;break;
+					   this.bullet.Y = this.Y + 4;break;
 			case Left :this.bullet.X = this.X;
 					   this.bullet.Y = this.Y + 2;break;
-			case Right:this.bullet.X = this.X + 5;
+			case Right:this.bullet.X = this.X + 4;
 					   this.bullet.Y = this.Y +2;break;
 		}
 	}
@@ -222,11 +225,13 @@ function tankEnemy(beginX,beginY,direction,life,thewhichTank,theimgU,theimgD,the
 
 		if(this.slow){
 			var key = noDir;
-			var followX = me.X - this.X;
-			var followY = me.Y - this.Y;
+			var followX ;
+			var followY ;
 
 		switch(this.whichTank){
-			case 2:if(followX>0) {
+			case 2: followX = me.X - this.X;
+					followY = me.Y - this.Y;
+					if(followX>0) {
 						key = Right;
 					}else if(followX < 0) {
 							key = Left;
@@ -237,7 +242,9 @@ function tankEnemy(beginX,beginY,direction,life,thewhichTank,theimgU,theimgD,the
 							}
 					break;
 
-			case 3:if(followY>0) {
+			case 3:followX = me.X - this.X;
+					followY = me.Y - this.Y;
+					if(followY>0) {
 						key = Down;
 					}else if(followY < 0) {
 							key = Up;
@@ -248,7 +255,9 @@ function tankEnemy(beginX,beginY,direction,life,thewhichTank,theimgU,theimgD,the
 							}
 					break;
 
-			case 4:if(followY>0) {
+			case 4:followX = 30 - this.X;
+					followY = 60 - this.Y;
+					if(followY>0) {
 						key = Down;
 					}else if(followX < 0) {
 							key = Left;
@@ -390,10 +399,10 @@ function tankEnemy(beginX,beginY,direction,life,thewhichTank,theimgU,theimgD,the
 			case Up   :this.bullet.X = this.X + 2;
 					   this.bullet.Y = this.Y;break;
 			case Down :this.bullet.X = this.X + 2;
-					   this.bullet.Y = this.Y+5;break;
+					   this.bullet.Y = this.Y+4;break;
 			case Left :this.bullet.X = this.X;
 					   this.bullet.Y = this.Y + 2;break;
-			case Right:this.bullet.X = this.X + 5;
+			case Right:this.bullet.X = this.X + 4;
 					   this.bullet.Y = this.Y +2;break;
 		}
 	}
@@ -437,6 +446,28 @@ function bullet(X,Y,direction,theimgB,tank){
 		else{
 			return 1;
 		}
+	}
+
+	this.bulletTouchWall = function(){
+		var i;
+		switch(this.direction){
+			case Down :
+			case Up   :for(i = -3; i< 4;++i){
+							if((this.X+i)>=0&&(this.X+i)<=64){
+								if(map[this.X + i][this.Y] == 15) 
+									map[this.X + i][this.Y] = 0;
+							}	
+						}
+						break;
+			case Left :
+			case Right:for(i = -3; i< 4;++i){
+							if((this.Y+i)>=0&&(this.Y+i)<=64){
+								if(map[this.X][this.Y+i] == 15) 
+									map[this.X][this.Y + i] = 0;
+							}
+						}
+						break;
+		}
 	}	
 }
 
@@ -450,8 +481,8 @@ function init(){
 
 	imgWall.src = "../static/img/wall.gif"
 	imgSteel.src = "../static/img/steel.gif"
-
-	drawMap();
+	imgBase.src = "../static/img/base.gif"
+	imgDestory.src = "../static/img/destory.gif"
 
 	for (var i = 0; i <66; ++i) {
 		map[i] = new Array(66);
@@ -465,8 +496,69 @@ function init(){
 	for(var i = 0;i < 3;++i){
 		enemy[i].writeMap(i+2);
 	}
-	
+	drawMap();
 	draw();
+}
+
+function drawMap(){
+	for(var i = 0; i <= 64 ; ++i)
+		for(var j = 15; j < 20; ++j){
+			map[i][j] = 15;
+		}
+
+	for(var i = 0; i <= 64 ; ++i)
+		for(var j = 40; j < 45; ++j){
+			map[i][j] = 15;
+		}
+
+	for(var i =12; i < 17 ; ++i)
+		for(var j = 0; j <= 64; ++j){
+			map[i][j] = 15;
+		}
+
+	for(var i =45; i < 50 ; ++i)
+		for(var j = 0; j <= 64; ++j){
+			map[i][j] = 15;
+		}
+		
+	for(var i =12; i < 17 ; ++i)
+		for(var j = 15; j < 20; ++j){
+			map[i][j] = 16;
+		}	
+
+	for(var i =45; i < 50 ; ++i)
+		for(var j = 15; j < 20; ++j){
+			map[i][j] = 16;
+		}	
+
+	for(var i =12; i < 17 ; ++i)
+		for(var j = 40; j < 45; ++j){
+			map[i][j] = 16;
+		}	
+
+	for(var i =45; i < 50 ; ++i)
+		for(var j = 40; j < 45; ++j){
+			map[i][j] = 16;
+		}	
+	//build the base wall
+	for(var j = 59; j < 65; ++j){
+		map[29][j] = 15;
+		map[35][j] = 15;
+	}	
+
+	for(var i = 30; i < 35; ++i){
+		map[i][59] = 15;
+	}
+
+	writeImg(30,60,17);
+}
+
+function writeImg(x,y,num){
+	for (var i = 0; i< 5;++i) {
+		for(var j = 0;j < 5; ++j){
+			map[x+i][y+j] = num;
+		}
+	}
 }
 
 function initTankMe(){
@@ -500,25 +592,31 @@ function initTankEnemy(beginX,beginY,life,whichTank){
 }
 
 function control(){
-	if(me.life > 0){
-		me.keyChoice(keycode);
-	}
-
-	for(var i = 0;i < 3;++i){
-		if(enemy[i].life > 0){
-			enemy[i].keyChoice();
+	if(me.life<=0 || map[30][60] == 18){
+		clearTimeout(a);
+		restart();
+	}else{
+		if(me.life > 0){
+			me.keyChoice(keycode);
+			keycode = noDir;
 		}
+
+		for(var i = 0;i < 3;++i){
+			if(enemy[i].life > 0){
+				enemy[i].keyChoice();
+			}
+		}
+		
+		bulletMoveJudge();
+
+		draw();
+		
+		a = setTimeout("control()",30);	
 	}
 	
-	bulletMoveJudge();
-
-	draw();
-	
-	setTimeout("control()",30);	
 }
 
 function bulletMoveJudge(){
-	keycode = noDir;
 	if(me.bullet.fired) {
 		me.bullet.move();
 		if( map[me.bullet.X][me.bullet.Y] != 1){
@@ -548,6 +646,12 @@ function bulletMoveJudge(){
 						}
 						me.bullet.fired = 0;
 						break;
+
+				case 15:me.bullet.bulletTouchWall();
+				case 16:me.bullet.fired = 0;break;
+				case 17:me.bullet.fired = 0;
+							writeImg(30,60,18);
+							break;
 			}
 		}
 	}
@@ -555,7 +659,6 @@ function bulletMoveJudge(){
 	for(var i = 0;i < 3;++i){
 		if(enemy[i].bullet.fired) {
 			enemy[i].bullet.move();
-			if(map[enemy[i].bullet.X][enemy[i].bullet.Y] != 2 ){
 				switch(map[enemy[i].bullet.X][enemy[i].bullet.Y]){
 					case 0 :if(enemy[i].bullet.judge()){
 								map[enemy[i].bullet.X][enemy[i].bullet.Y] = 9;
@@ -576,9 +679,12 @@ function bulletMoveJudge(){
 							enemy[i].bullet.fired = 0;
 							map[me.bullet.X][me.bullet.Y] = 0;
 							break;
+					case 15:enemy[i].bullet.bulletTouchWall();
+					case 16:enemy[i].bullet.fired = 0;break;
+					case 17:enemy[i].bullet.fired = 0;
+							writeImg(30,60,18);
+							break;
 				}
-			}
-
 		}
 	}
 }
@@ -586,6 +692,22 @@ function bulletMoveJudge(){
 function draw(){
 		var canvas = document.getElementById("main").getContext("2d");
 			canvas.clearRect(0,0,650,650);
+
+			if(map[30][60] == 17){
+				canvas.drawImage(imgBase,300,600,50,50);
+			}else{
+				canvas.drawImage(imgDestory,300,600,50,50);
+			}
+
+			for(var i = 0; i <= 64 ; ++i)
+				for(var j = 0; j <= 64; ++j){
+					switch(map[i][j]){
+						case 15:canvas.drawImage(imgWall,i*10,j*10,10,10);break;
+						case 16:canvas.drawImage(imgSteel,i*10,j*10,10,10);break;
+					}
+				}
+
+
 			if(me.life > 0){
 				canvas.drawImage(me.getImg(),me.X*10,me.Y*10,50,50);
 			}
@@ -604,6 +726,10 @@ function draw(){
 					canvas.drawImage(enemy[i].bullet.img,enemy[i].bullet.X*10,enemy[i].bullet.Y*10,10,10);
 				}
 			}
+}
+
+function restart(){
+	
 }
 
 
