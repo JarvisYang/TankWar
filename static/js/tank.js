@@ -21,7 +21,28 @@ $(document).ready(function(){
 		keycode=e.keyCode||e.which||e.charCode;
 	});
 	
+	$(".startButton").click(function(){
+		$(".startBG").css("display","none");
+		init();
+		control();
+	});
+
+	$(".restartButton").click(function(){
+		$(".restartBG").css("display","none");
+		init();
+		control();
+	});
+
+	$(".backButton").click(function(){
+		$(".restartBG").css("display","none");
+		document.getElementById("main").getContext("2d").clearRect(0,0,650,650);
+		$(".startBG").css("display","block");
+		
+		
+	});
+
 });
+
 
 
 function tankMe(beginX,beginY,direction,life,theimgU,theimgD,theimgL,theimgR,theimgB){
@@ -729,7 +750,9 @@ function draw(){
 }
 
 function restart(){
-	
+	$(document).ready(function(){
+		$(".restartBG").css("display","block");
+	});
 }
 
 
