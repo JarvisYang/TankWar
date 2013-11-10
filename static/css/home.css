@@ -120,3 +120,106 @@ body{
 	top: 0px;
 	left: 0px;
 }
+
+.designMap{
+	position: absolute;
+	top: 95px;
+	left: 150px;
+
+	display: none;
+	margin: 0px;
+	width:130px;
+	height: 415px;
+	text-align: center;
+
+	background-color: rgb(235,235,235);
+}
+
+.designMap p{
+	color: white ;
+	font: 15px/40px Arial,sans-serif;
+ 
+}
+
+.wallBlockBG{
+	background-image: url("../img/wall.gif");
+	background-size: 10px 10px;
+	background-repeat: repeat;
+	width: 50px;
+	height: 50px;
+	margin:50px auto;
+}
+
+.steelBlockBG{
+	background-image: url("../img/steel.gif");
+	background-size: 10px 10px;
+	background-repeat: repeat;
+	width: 50px;
+	height: 50px;
+	margin:50px auto;
+}
+
+.wallBlock{
+	position:relative;
+	top:0px;
+	left: 0px;
+	z-index: 2;
+	background-image: url("../img/wall.gif");
+	background-size: 10px 10px;
+	background-repeat: repeat;
+	width: 50px;
+	height: 50px;
+	margin:0px;
+
+}
+
+.steelBlock{
+	position:relative;
+	top:0px;
+	left: 0px;
+	z-index: 2;
+	background-image: url("../img/steel.gif");
+	background-size: 10px 10px;
+	background-repeat: repeat;
+	width: 50px;
+	height: 50px;
+	margin:0px;
+
+}
+
+.reset{
+	background-color: black;
+	margin:20px auto;
+	width:95px;
+	height: 35px;
+	cursor: pointer;
+}
+
+.designEndAndStart{
+	background-color: black;
+	margin:20px auto;
+	width:95px;
+	height: 35px;
+	cursor: pointer;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
