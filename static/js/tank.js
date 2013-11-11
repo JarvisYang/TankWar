@@ -4,8 +4,9 @@ const Right = 39;
 const Down  = 40;
 const Space = 32;
 const noDir = 0;
-const wall  = 1;
-const steel = 2;
+const clean = 14;
+const wall  = 15;
+const steel = 16;
 
 var me;
 var whichImg;
@@ -20,6 +21,7 @@ var imgDestory = new Image();
 //0:nothing 1:me  2:enemy[0] 3:enemy[1]  4:enemy[2] 9:bullet 
 // 15:imgWall  16:imgSteel  17:imgBase   18:imgDestory
 var map = new Array(66);
+var designMap ;
 $(document).ready(function(){
 
 	var mouseStartX;
@@ -27,7 +29,7 @@ $(document).ready(function(){
 
 	$(document).keydown(function(){
 		var e=e||event;
-		keycode=e.keyCode||e.which||e.charCode;
+		keycode =e.keyCode||e.which||e.charCode;
 	});
 	
 	$(".startButton").click(function(){
@@ -40,15 +42,38 @@ $(document).ready(function(){
 	$(".designButton").click(function(){
 		$(".startBG").css("display","none");
 		$(".designMap").css("display","block");
-		init();
-		draw();
+		if(designMap == null){
+			init();
+			draw();
+		}
+		else{
+			map = designMap;
+			init();
+			draw();
+		}
+		
 	});
 
 	$(".restartButton").click(function(){
 		$(".restartBG").css("display","none");
-		init();
-		drawMap();
+		if(designMap == null){
+			init();
+			drawMap();
+		}
+		else{
+			for(var i = 0; i <66; ++i)
+				for(var j = 0; j <66; ++j){
+					map[i][j] = designMap[i][j];;
+				}
+			initTankAndBase();
+			draw();
+		}
 		control();
+	});
+
+	$(".reset").click(function(){
+		init();
+		draw();
 	});
 
 	$(".backButton").click(function(){
@@ -58,6 +83,14 @@ $(document).ready(function(){
 	});
 
 	$(".designEndAndStart").click(function(){
+		designMap = new Array(66);
+		for(var i = 0; i <66; ++i){
+			designMap[i] = new Array(66);
+			for(var j = 0; j <66; ++j){
+				designMap[i][j] = map[i][j];;
+			}
+		}
+		$(".designMap").css("display","none");
 		control();
 	});
 
@@ -89,6 +122,20 @@ $(document).ready(function(){
 		});
 	});
 
+	$(".cleanBlock").mousedown(function(){
+		mouseStartX = event.pageX;
+		mouseStartY = event.pageY;
+
+		whichImg = clean;
+
+		$(document).bind("mousemove",function(){
+			var moveX = event.pageX - mouseStartX;
+			var moveY = event.pageY - mouseStartY;
+			$(".cleanBlock").css("top",moveY);
+			$(".cleanBlock").css("left",moveX);
+		});
+	});
+
 	$(document).mouseup(function(){
 			$(document).unbind("mousemove");
 			switch(whichImg){
@@ -97,8 +144,27 @@ $(document).ready(function(){
 
 							var imgX = (event.pageX - $("#main").offset().left - mouseStartX + $(".wallBlock").offset().left)/10;
 							var imgY = (event.pageY - $("#main").offset().top - mouseStartY + $(".wallBlock").offset().top)/10;
-							writeImg(parseInt(imgX),parseInt(imgY),15);
-							draw();
+							imgX = parseInt(imgX);
+							imgY = parseInt(imgY);
+							if(imgX >= 0 && imgX <= 60 && imgY >=0 && imgY <= 60){
+								var canPlace = 1;
+								for (var i = 0; i <5 ;++i)
+									for(var j = 0; j <5 ; ++j){
+										if(map[imgX +i][imgY + j]!=0 
+											&& map[imgX +i][imgY + j]!= wall 
+											&& map[imgX +i][imgY + j]!= steel){
+											canPlace = 0;
+											break;
+										}
+									}
+								if(canPlace){
+									writeImg(imgX,imgY,15);
+									draw();
+								}
+							}
+							
+
+							whichImg = 0;
 
 							break;
 
@@ -107,8 +173,54 @@ $(document).ready(function(){
 
 							var imgX = (event.pageX - $("#main").offset().left - mouseStartX + $(".steelBlock").offset().left)/10;
 							var imgY = (event.pageY - $("#main").offset().top - mouseStartY + $(".steelBlock").offset().top)/10;
-							writeImg(parseInt(imgX),parseInt(imgY),16);
-							draw();
+							imgX = parseInt(imgX);
+							imgY = parseInt(imgY);
+							if(imgX >= 0 && imgX <= 60 && imgY >=0 && imgY <= 60){
+								var canPlace = 1;
+								for (var i = 0; i <5 ;++i)
+									for(var j = 0; j <5 ; ++j){
+										if(map[imgX +i][imgY + j]!=0 
+											&& map[imgX +i][imgY + j]!= wall 
+											&& map[imgX +i][imgY + j]!= steel){
+											canPlace = 0;
+											break;
+										}
+									}
+								if(canPlace){
+									writeImg(imgX,imgY,16);
+									draw();
+								}
+							}
+
+							whichImg = 0;
+
+							break;
+
+				case clean: $(".cleanBlock").css("top",0);
+							$(".cleanBlock").css("left",0);
+
+							var imgX = (event.pageX - $("#main").offset().left - mouseStartX + $(".cleanBlock").offset().left)/10;
+							var imgY = (event.pageY - $("#main").offset().top - mouseStartY + $(".cleanBlock").offset().top)/10;
+							imgX = parseInt(imgX);
+							imgY = parseInt(imgY);
+							if(imgX >= 0 && imgX <= 60 && imgY >=0 && imgY <= 60){
+								var canPlace = 1;
+								for (var i = 0; i <5 ;++i)
+									for(var j = 0; j <5 ; ++j){
+										if(map[imgX +i][imgY + j]!=0 
+											&& map[imgX +i][imgY + j]!= wall 
+											&& map[imgX +i][imgY + j]!= steel){
+											canPlace = 0;
+											break;
+										}
+									}
+								if(canPlace){
+									writeImg(imgX,imgY,0);
+									draw();
+								}
+							}
+
+							whichImg = 0;
 
 							break;
 			}
@@ -295,7 +407,9 @@ function tankEnemy(beginX,beginY,direction,life,thewhichTank,theimgU,theimgD,the
 	this.whichTank  = thewhichTank
 	this.dirJudge   = 0;
 	this.slow       = 1;
-	this.moveStep   = 4;
+	this.moveStep   = 2+this.whichTank;
+	this.randomTime = 2;
+	this.normalTime = 5;
 	this.enemyFired = thewhichTank*13;
 	this.score      = 0;
 	this.life       = life;
@@ -319,67 +433,91 @@ function tankEnemy(beginX,beginY,direction,life,thewhichTank,theimgU,theimgD,the
 			if(!this.bullet.fired) this.fire();
 		}
 
+
 		if(this.slow){
 			var key = this.direction;
-			var followX ;
-			var followY ;
 
-		if(!this.moveStep){
-			switch(this.whichTank){
-				case 2: followX = me.X - this.X;
-						followY = me.Y - this.Y;
-						if(followX>0) {
-							key = Right;
-						}else if(followX < 0) {
-								key = Left;
-							}else if(followY > 0) {
+			if(!this.moveStep){
+				this.moveStep = 10;
+
+				if(this.randomTime){
+					var randomNun = parseInt(Math.random()*100)%4;
+					switch(randomNun){
+						case 0 :key = Up;break;
+						case 1 :key = Down;break;
+						case 2 :key = Right;break;
+						case 3 :key = Left;break;
+					}
+					--this.randomTime;
+				}
+				else{
+					if(this.normalTime){
+						--this.normalTime
+					}
+					else{
+						this.randomTime = 2;
+						this.normalTime = 2+this.whichTank;
+					}
+					
+					var followX ;
+					var followY ;
+					switch(this.whichTank){
+						case 2: followX = me.X - this.X;
+								followY = me.Y - this.Y;
+								if(followX>0) {
+									key = Right;
+								}else if(followX < 0) {
+										key = Left;
+									}else if(followY > 0) {
+											key = Down;
+										}else if(followY < 0){
+											key = Up;
+										}
+								break;
+
+						case 3:followX = me.X - this.X;
+								followY = me.Y - this.Y;
+								if(followY>0) {
 									key = Down;
-								}else if(followY < 0){
-									key = Up;
-								}
-						break;
+								}else if(followY < 0) {
+										key = Up;
+									}else if(followX > 0) {
+											key = Right;
+										}else if(followX < 0){
+											key = Left;
+										}
+								break;
 
-				case 3:followX = me.X - this.X;
-						followY = me.Y - this.Y;
-						if(followY>0) {
-							key = Down;
-						}else if(followY < 0) {
-								key = Up;
-							}else if(followX > 0) {
-									key = Right;
-								}else if(followX < 0){
-									key = Left;
-								}
-						break;
+						case 4:followX = 30 - this.X;
+								followY = 60 - this.Y;
+								if(followY>0) {
+									key = Down;
+								}else if(followX < 0) {
+										key = Left;
+									}else if(followX > 0) {
+											key = Right;
+										}else if(followY < 0){
+											key = Up;
+										}
+								break;
+					}
+				}
 
-				case 4:followX = 30 - this.X;
-						followY = 60 - this.Y;
-						if(followY>0) {
-							key = Down;
-						}else if(followX < 0) {
-								key = Left;
-							}else if(followX > 0) {
-									key = Right;
-								}else if(followY < 0){
-									key = Up;
-								}
-						break;
 			}
-			this.moveStep = 4;
-		}
-			
+
 			switch(key){
 				case Left  : this.moveLeft();break;
 				case Up    : this.moveUp();break;
 				case Right : this.moveRight();break;
 				case Down  : this.moveDown();break;
 			}
+			-- this.moveStep;
 			this.slow = 0;
 		}
 		else{
 			this.slow = 1;
 		}
-		
+	
 	}
 
 	this.moveLeft = function(){
@@ -388,7 +526,7 @@ function tankEnemy(beginX,beginY,direction,life,thewhichTank,theimgU,theimgD,the
 			this.X       -= this.speed;
 			this.dirJudge =  0;
 			this.writeMap(this.whichTank);
-			-- this.moveStep;
+			//-- this.moveStep;
 		}
 		else{
 			if(this.direction != Left){
@@ -405,7 +543,7 @@ function tankEnemy(beginX,beginY,direction,life,thewhichTank,theimgU,theimgD,the
 			this.Y       -= this.speed;
 			this.dirJudge =  0;
 			this.writeMap(this.whichTank);
-			-- this.moveStep;
+			//-- this.moveStep;
 		}
 		else{
 			if(this.direction != Up){
@@ -422,7 +560,7 @@ function tankEnemy(beginX,beginY,direction,life,thewhichTank,theimgU,theimgD,the
 			this.X       += this.speed;
 			this.dirJudge =  0;
 			this.writeMap(this.whichTank);
-			-- this.moveStep;
+			//-- this.moveStep;
 		}
 		else{
 			if(this.direction != Right){
@@ -438,7 +576,7 @@ function tankEnemy(beginX,beginY,direction,life,thewhichTank,theimgU,theimgD,the
 			this.Y += this.speed;
 			this.dirJudge =  0;
 			this.writeMap(this.whichTank);
-			-- this.moveStep;
+			//-- this.moveStep;
 		}
 		else{
 			if(this.direction != Down){
@@ -575,13 +713,7 @@ function bullet(X,Y,direction,theimgB,tank){
 }
 
 function init(){
-	var map2 = new Array(66);
 	var i;
-	me       = initTankMe();
-	enemy[0] = initTankEnemy(0,0,3,2);
-	enemy[1] = initTankEnemy(30,0,3,3);
-	enemy[2] = initTankEnemy(60,0,3,4);
-
 	imgWall.src = "../static/img/wall.gif"
 	imgSteel.src = "../static/img/steel.gif"
 	imgBase.src = "../static/img/base.gif"
@@ -592,8 +724,21 @@ function init(){
 	};
 
 	for(var i = 0; i <66; ++i)
-		for(var j = 0; j <66; ++j)
+		for(var j = 0; j <66; ++j){
 			map[i][j] = 0;
+		}
+
+	initTankAndBase();
+
+	
+	
+}
+
+function initTankAndBase(){
+	me       = initTankMe();
+	enemy[0] = initTankEnemy(0,0,3,2);
+	enemy[1] = initTankEnemy(30,0,3,3);
+	enemy[2] = initTankEnemy(60,0,3,4);
 
 	//build the base wall
 	for(var j = 59; j < 65; ++j){
@@ -611,7 +756,6 @@ function init(){
 	for(var i = 0;i < 3;++i){
 		enemy[i].writeMap(i+2);
 	}
-	
 }
 
 function drawMap(){
@@ -702,7 +846,7 @@ function control(){
 	}else{
 		if(me.life > 0){
 			me.keyChoice(keycode);
-			keycode = noDir;
+			keycode = noDir;		
 		}
 
 		for(var i = 0;i < 3;++i){
