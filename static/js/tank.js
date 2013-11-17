@@ -7,6 +7,8 @@ const noDir = 0;
 const clean = 14;
 const wall  = 15;
 const steel = 16;
+const design = 0;
+const start   = 1;
 
 var me;
 var whichImg;
@@ -16,6 +18,7 @@ var imgSteel   = new Image();
 var imgWall    = new Image();
 var imgBase	   = new Image();
 var imgDestory = new Image();
+var status     = start;
 
 
 //0:nothing 1:me  2:enemy[0] 3:enemy[1]  4:enemy[2] 9:bullet 
@@ -34,6 +37,7 @@ $(document).ready(function(){
 	
 	$(".startButton").click(function(){
 		$(".startBG").css("display","none");
+		status = start;
 		init();
 		drawMap();
 		control();
@@ -42,21 +46,16 @@ $(document).ready(function(){
 	$(".designButton").click(function(){
 		$(".startBG").css("display","none");
 		$(".designMap").css("display","block");
-		if(designMap == null){
+		status = design;
 			init();
 			draw();
-		}
-		else{
-			map = designMap;
-			init();
-			draw();
-		}
+		
 		
 	});
 
 	$(".restartButton").click(function(){
 		$(".restartBG").css("display","none");
-		if(designMap == null){
+		if(status == start){
 			init();
 			drawMap();
 		}
